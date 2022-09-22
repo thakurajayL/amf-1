@@ -8,14 +8,12 @@ FROM golang:1.18.0-stretch AS builder
 LABEL maintainer="ONF <omec-dev@opennetworking.org>"
 
 #RUN apt remove cmdtest yarn
-RUN apt-get update
-RUN apt-get -y install apt-transport-https ca-certificates
+RUN apt-get update && apt-get -y install apt-transport-https ca-certificates
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg > pubkey.gpg
 RUN apt-key add pubkey.gpg
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" |  tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update
-RUN apt-get -y install gcc cmake autoconf libtool pkg-config libmnl-dev libyaml-dev  nodejs yarn
+RUN apt-get update && apt-get -y install gcc cmake autoconf libtool pkg-config libmnl-dev libyaml-dev  nodejs yarn
 RUN apt-get clean
 
 RUN cd $GOPATH/src && mkdir -p amf
@@ -23,7 +21,7 @@ COPY . $GOPATH/src/amf
 RUN cd $GOPATH/src/amf \
     && make all
 
-FROM alpine:3.8 as amf
+FROM alpine:3.16 as amf
 
 LABEL description="ONF open source 5G Core Network" \
     version="Stage 3"
